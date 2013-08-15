@@ -14,6 +14,8 @@ This code is open source under theMIT license. See the LICENSE.md file for full 
 
 Requirements
 ------------
+Due to the unique way that refine spawns child processes, this version is Unix only sorry!
+
 * nodejs > 0.8.0
 * npm > 1.3 
 * OpenRefine (plus dependancies, e.g. java-jdk)
@@ -24,4 +26,4 @@ Installation
 2. Install OpenRefine into a directory called users/OpenRefine
 3. COPY your users/OpenRefine directory to users/RefineReady
 4. run "npm install" on the top level directory
-5. run nodejs app.js
+5. run "nodejs app.js"
