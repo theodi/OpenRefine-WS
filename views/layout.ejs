@@ -1,21 +1,87 @@
 <!DOCTYPE html>
-<html>
-	<head>
-		<title>Passport-Google Example</title>
-	</head>
-	<body>
-		<% if (!user) { %>
-			<p>
-			<a href="/">Home</a> | 
-			<a href="/login">Log In</a>
-			</p>
-		<% } else { %>
-			<p>
-			<a href="/">Home</a> | 
-			<a href="/account">Account</a> | 
-			<a href="/logout">Log Out</a>
-			</p>
-		<% } %>
-		<%- body %>
-	</body>
+<html prefix="dct: http://purl.org/dc/terms/
+              rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns#
+              dcat: http://www.w3.org/ns/dcat#
+              odrs: http://schema.theodi.org/odrs#">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenRefine WS</title>
+<!--<link href="http://assets.theodi.org/css/odi-bootstrap-crimson.css" rel="stylesheet">
+<link href="http://assets.theodi.org/css/odi-bootstrap-green.css" rel="stylesheet">
+<link href="http://assets.theodi.org/css/odi-bootstrap-orange.css" rel="stylesheet">
+<link href="http://assets.theodi.org/css/odi-bootstrap-pomegranate.css" rel="stylesheet">
+<link href="http://assets.theodi.org/css/odi-bootstrap-red.css" rel="stylesheet">-->
+<link href="http://assets.theodi.org/css/odi-bootstrap.css" rel="stylesheet">
+<link rel="shortcut icon" href="http://theodi.org/favicon.ico">
+</head>
+<body>
+<nav>
+	<div class='navbar navbar-inverse navbar-static-top' id='topbar'>
+		<div class='container'>
+			<div class='navbar-inner'>
+				<h1>OpenRefine WS</h1>
+				<a class='brand' href='/'>
+					<img alt="Logo" src="/img/logo.png" />
+				</a>
+			</div>
+		</div>
+	</div>
+	<div class='navbar navbar-static-top' id='mainnav'>
+		<div class='container'>
+			<div class='navbar-inner'>
+				<ul class='nav pull-right'>
+					<li>
+						<a href="/">Home</a>
+					</li>
+					<% if (!user) { %>
+					<li>
+						<a href="/auth/google">Log In</a>
+					</li>
+					<% } else { %>
+					<li>	
+						<a href="/account">Account</a>
+					</li>
+					<li>
+						<a href="/logout">Log Out</a>
+					</li>
+					<% } %>	
+				</ul>
+			</div>
+		</div>
+	</div>
+</nav>
+<div class='whiteout'>
+	<header>
+		<div class='container'>
+			<h1><%- page %></h1>
+		</div>
+	</header>
+
+<div class='container main-default' id='main'>
+
+<%- body %>
+
+</div>
+</div>
+<footer id='footer'>
+	<div class='container'>
+		<div class='span8 footer-content'>
+			<h1><a href='http://www.theodi.org'>Open Data Institute</a></h1>
+			<p> <a href='http://www.openstreetmap.org/?lat=51.522205&amp;lon=-0.08176500000001852&amp;zoom=16&amp;layers=T&amp;mlat=51.52210&amp;mlon=-0.08343'>Open Data Institute</a><span>, 65 Clifton Street, London EC2A 4JE</span></p>
+			<p><a href='mailto:info@theodi.org'>info@theodi.org</a> · Company <a href='http://opencorporates.com/companies/gb/08030289'>08030289</a>	· <span>VAT</span> <span>143 7796 80</span></p>
+			<p class='license'><a href='http://creativecommons.org/licenses/by-sa/2.0/uk/deed.en_GB' rel='license'><img alt="Creative Commons Licence" height="15" src="/img/logo_cc_80x15.png" width="80" /></a></p>
+		</div>
+		<div class='span4 footer-nav'>
+			<nav>
+				<ul class='pull-right'>
+					<li><a href="http://www.theodi.org/terms-of-use">Terms of use</a></li>
+					<li><a href="http://www.theodi.org/about">About</a></li>
+					<li><a href="/contact">Get in touch</a></li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</footer>
+</body>
 </html>

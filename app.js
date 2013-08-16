@@ -72,20 +72,32 @@ app.configure(function() {
 app.get('/', ensureAuthenticated, function(req, res){
   req.user.ip = req.connection.remoteAddress;
   req.user = getProxy(req.user);
-  res.render('index', { user: req.user });
+  res.render('index', { user: req.user, page: "Home" });
 });
 
 app.get('/account', ensureAuthenticated, function(req, res){
-  res.render('account', { user: req.user });
+  res.render('account', { user: req.user, page: "Account" });
 });
 
-app.get('/login', function(req, res){
-  res.render('login', { user: req.user });
+app.get('/home', function(req, res){
+  res.render('home', { user: req.user, page: "Home" });
 });
 
 app.get('/shutdown', ensureAuthenticated, function(req,res) {
   req.user = exitRefine(req.user);
   res.redirect('/logout');
+});
+
+app.get('/img/logo.png', function(req,res) {
+	var img = fs.readFileSync('./img/logo.png');
+	res.writeHead(200, {'Content-Type': 'image/png' });
+	res.end(img, 'binary');
+});
+
+app.get('/img/logo_cc_80x15.png', function(req,res) {
+	var img = fs.readFileSync('./img/logo_cc_80x15.png');
+	res.writeHead(200, {'Content-Type': 'image/png' });
+	res.end(img, 'binary');
 });
 
 // GET /auth/google
@@ -94,7 +106,7 @@ app.get('/shutdown', ensureAuthenticated, function(req,res) {
 //   the user to google.com.  After authenticating, Google will redirect the
 //   user back to this application at /auth/google/return
 app.get('/auth/google', 
-  passport.authenticate('google', { failureRedirect: '/login' }),
+  passport.authenticate('google', { failureRedirect: '/home' }),
   function(req, res) {
     res.redirect('/');
   });
@@ -105,7 +117,7 @@ app.get('/auth/google',
 //   login page.  Otherwise, the primary route function function will be called,
 //   which, in this example, will redirect the user to the home page.
 app.get('/auth/google/return', 
-  passport.authenticate('google', { failureRedirect: '/login' }),
+  passport.authenticate('google', { failureRedirect: '/home' }),
   function(req, res) {
     res.redirect('/');
   });
@@ -114,7 +126,7 @@ app.get('/logout', function(req, res){
   req.user = exitRefine(req.user);
   req.logout();
   delete req;
-  res.redirect('/');
+  res.redirect('/home');
 });
 
 app.listen(3000);
@@ -129,11 +141,11 @@ function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { 
 	return next(); 
   }
-  res.redirect('/login')
+  res.redirect('/home')
 }
 
 function getProxy(user) {
-	console.log("\n\n" + user.emails[0].value + "\n\n");
+//	console.log("\n\n" + user.emails[0].value + "\n\n");
 	var servers = loadServerData();
 	if (!servers) {
 		console.log("\n\nNO SERVERS LOADED\n\n");
@@ -149,6 +161,7 @@ function getProxy(user) {
 			servers[i].ip = user.ip
 			saveServerData(servers);
 			user.proxy_port = proxy.port;
+			user.host = host;
 			
 			// Find or create users data directory
 
@@ -207,14 +220,14 @@ function saveServerData(data) {
 			console.log(err.message);
 			return;
 		}
-		console.log('\n\nConfig Saved\n\n');
+//		console.log('\n\nConfig Saved\n\n');
 	});
 }
 
 function launchRefine(user) {
 	path = process.cwd() + '/users/' + user.emails[0].value;
 	port = user.proxy_port;
-	console.log("\n\nLauching Refine with data " + path + " on port " + port + "\n\n");
+//	console.log("\n\nLauching Refine with data " + path + " on port " + port + "\n\n");
 	user.child = exec("./OpenRefine/refine -d " + path + " -i " + ip + " -p " + port, 
 		function (error, stdout, strerr) {
 		}

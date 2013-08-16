@@ -1,7 +1,7 @@
 <% if (!user) { %>
 	<h2>Welcome! Please log in.</h2>
 <% } else if (user.proxy_port > 0) { %>
-	<h2>Your instance of Open Refine is starting at <a target="_blank" href="http://192.168.56.101:<%= user.proxy_port %>">http://localhost:<%= user.proxy_port %></a>.</h2>
+	<h2>Your instance of Open Refine is starting at <a target="_blank" href="http://<%= user.host %>:<%= user.proxy_port %>">http://<%= user.host %>:<%= user.proxy_port %></a>.</h2>
 	<h2>When you are finished with your OpenRefine instance please <a href="/shutdown">click here</a> to shut it down, note that this is done automatically at midnight everyday (or when the server crashes).</h2>
 	<h2>Note: You can always get back to your own personal instance of OpenRefine</h2>
 <% } else if (user.proxy_port == 0) { %>

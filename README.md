@@ -14,6 +14,11 @@ License
 
 This code is open source under theMIT license. See the LICENSE.md file for full details.
 
+Acknowledgements
+----------------
+
+Many thanks to Jared Hanson for the excellently simple OAuth example (available at https://github.com/jaredhanson/passport-google) on which this library is based. 
+
 Requirements
 ------------
 
@@ -37,4 +42,3 @@ TODO
 ----
 * Added 1 hour timeout for servers 
 * Add interface to update time with 5 minutes left
-* Brand
