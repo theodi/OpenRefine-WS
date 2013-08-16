@@ -153,7 +153,7 @@ function getProxy(user) {
 	}
 	for (var i = 0; i<servers.length; i++) {
 		proxy = servers[i];
-		console.log("\n\nInspecting " + proxy.port + "\n\n");
+//		console.log("\n\nInspecting " + proxy.port + "\n\n");
 
 		// Find a port to run a server on
 		if (proxy.user == "" || proxy.user == user.emails[0].value) {

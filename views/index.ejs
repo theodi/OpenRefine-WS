@@ -1,10 +1,10 @@
 <% if (!user) { %>
 	<h2>Welcome! Please log in.</h2>
 <% } else if (user.proxy_port > 0) { %>
-	<h2>Your instance of Open Refine is starting at <a target="_blank" href="http://<%= user.host %>:<%= user.proxy_port %>">http://<%= user.host %>:<%= user.proxy_port %></a>.</h2>
-	<h2>When you are finished with your OpenRefine instance please <a href="/shutdown">click here</a> to shut it down, note that this is done automatically at midnight everyday (or when the server crashes).</h2>
-	<h2>Note: You can always get back to your own personal instance of OpenRefine</h2>
+	<p>Your instance of Open Refine is starting, please <a target="_blank" href="http://<%= user.host %>:<%= user.proxy_port %>">click here</a> to access it.</p>
+	<p>When you are finished with your OpenRefine instance please <a href="/shutdown">click here</a> to shut it down, note that this is done automatically at midnight everyday (or when the server crashes). Note that shutting down your instance will automatically log you out.</p>
+	<p>Note: You can always get back to your own personal instance of OpenRefine</p>
 <% } else if (user.proxy_port == 0) { %>
-	<h2>Applogies, however the server is currently over capacity, please <a href="/logout">log out</a> and try again later</h2>
+	<p>Applogies, however the server is currently over capacity, please <a href="/logout">log out</a> and try again later</p>
 <% } %>
 
