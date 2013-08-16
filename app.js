@@ -68,6 +68,7 @@ app.configure(function() {
 
 
 app.get('/', ensureAuthenticated, function(req, res){
+  req.user.ip = req.connection.remoteAddress;
   req.user = getProxy(req.user);
   res.render('index', { user: req.user });
 });
@@ -143,6 +144,7 @@ function getProxy(user) {
 		// Find a port to run a server on
 		if (proxy.user == "" || proxy.user == user.emails[0].value) {
 			servers[i].user = user.emails[0].value;
+			servers[i].ip = user.ip
 			saveServerData(servers);
 			user.proxy_port = proxy.port;
 			
@@ -177,6 +179,7 @@ function releaseProxyPort(port) {
 		// Find a port to run a server on
 		if (proxy.port == port) {
 			servers[i].user = "";
+			servers[i].ip = "";
 			saveServerData(servers);
 		}
 	}
