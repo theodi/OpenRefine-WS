@@ -2,7 +2,8 @@
 	<h2>Welcome! Please log in.</h2>
 <% } else if (user.proxy_port > 0) { %>
 	<p>Your instance of Open Refine is starting, please <a target="_blank" href="http://<%= user.host %>:<%= user.proxy_port %>">click here</a> to access it.</p>
-	<p>Your instantce will automatically shut down after the time shown below (at <%= user.expire %>)</p>
+	<p>When you are finished with your OpenRefine instance please <a href="/shutdown">click here</a> to shut it down (this will log you out).</p>
+	<p>Your instantce will automatically shut down after the time shown below:</p>
 	
 	<script src="/js/countdown.js"></script>
 
@@ -17,7 +18,6 @@
 	<br/>
 
 	<p>In order to extend your time allocation, <a href="/extend_time">click here</a> when there is less than 10 minutes remaining.</p>
-	<p>When you are finished with your OpenRefine instance please <a href="/shutdown">click here</a> to shut it down, note that this is done automatically at midnight everyday (or when the server crashes). Note that shutting down your instance will automatically log you out.</p>
 	<p>Note: You can always get back to your own personal instance of OpenRefine</p>
 <% } else if (user.proxy_port == 0) { %>
 	<p>Applogies, however the server is currently over capacity, please <a href="/logout">log out</a> and try again later</p>
