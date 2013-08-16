@@ -9,10 +9,12 @@ The default number of concurrent instances this application will start is 5, thi
 
 In order to only allow connections to refine from a single user, we add rules to the system firewall, currently this is only compabible with systems running ufw (ubuntu firewall)
 
+To maintain service, servers are automatically terminated after 1 hour of use. To extend this the user can click a button in their interface with 10 minutes to go. 
+
 License
 -------
 
-This code is open source under theMIT license. See the LICENSE.md file for full details.
+This code is open source under the MIT license. See the LICENSE.md file for full details.
 
 Acknowledgements
 ----------------
@@ -40,5 +42,4 @@ Installation
 
 TODO
 ----
-* Added 1 hour timeout for servers 
-* Add interface to update time with 5 minutes left
+* All bugs now tracked in GitHub at http://github.com/theodi/OpenRefine-WS
