@@ -23,7 +23,14 @@ Due to the unique way that refine spawns child processes, this version is Unix o
 Installation
 ------------
 1. Copy servers.json.template to servers.json and add/remove ports where you want to make refine available to users.
-2. Install OpenRefine into a directory called users/OpenRefine
-3. COPY your users/OpenRefine directory to users/RefineReady
+2. Install OpenRefine into a directory called OpenRefine at the top level of the code base
 4. run "npm install" on the top level directory
 5. run "nodejs app.js"
+
+TODO
+----
+* Fix code to use data directories created in ./user
+* Add firewall control code to restrict access to single user
+* Added 1 hour timeout for servers 
+* Add interface to update time with 5 minutes left
+* Brand
