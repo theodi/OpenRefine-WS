@@ -1,3 +1,5 @@
+var ip = "192.168.56.101";
+var host = "192.168.56.101";
 var express = require('express')
   , passport = require('passport')
   , util = require('util')
@@ -30,8 +32,8 @@ passport.deserializeUser(function(obj, done) {
 //   credentials (in this case, an OpenID identifier and profile), and invoke a
 //   callback with a user object.
 passport.use(new GoogleStrategy({
-    returnURL: 'http://localhost:3000/auth/google/return',
-    realm: 'http://localhost:3000/'
+    returnURL: 'http://' + host + ':3000/auth/google/return',
+    realm: 'http://' + host + ':3000/'
   },
   function(identifier, profile, done) {
     // asynchronous verification, for effect...
@@ -225,7 +227,7 @@ function launchRefine(user) {
 	path = './users/' + user.emails[0].value;
 	port = user.proxy_port;
 	console.log("\n\nLauching Refine with data " + path + " on port " + port + "\n\n");
-	user.child = exec("./OpenRefine/refine -d " + path + " -p " + port, 
+	user.child = exec("./OpenRefine/refine -d " + path + " -i " + ip + " -p " + port, 
 		function (error, stdout, strerr) {
 		}
 	);
