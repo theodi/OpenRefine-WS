@@ -211,20 +211,8 @@ function saveServerData(data) {
 	});
 }
 
-function makeNewRefineReady() {
-	ncp('./users/OpenRefine/','./users/RefineTemp/', 
-		function (err) {
-			if (err) {
-				console.log(err.message);
-			} else {
-				fs.renameSync('./users/RefineTemp','./users/RefineReady/');
-			}
-		}
-	);
-}
-									
 function launchRefine(user) {
-	path = './users/' + user.emails[0].value;
+	path = process.cwd() + '/users/' + user.emails[0].value;
 	port = user.proxy_port;
 	console.log("\n\nLauching Refine with data " + path + " on port " + port + "\n\n");
 	user.child = exec("./OpenRefine/refine -d " + path + " -i " + ip + " -p " + port, 

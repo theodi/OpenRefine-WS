@@ -35,7 +35,6 @@ Installation
 
 TODO
 ----
-* Fix code to use data directories created in ./user
 * Added 1 hour timeout for servers 
 * Add interface to update time with 5 minutes left
 * Brand
