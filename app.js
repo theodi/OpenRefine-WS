@@ -5,13 +5,10 @@ var express = require('express')
   , fs = require('fs')
   , sys = require('sys')
   , exec = require('child_process').exec
-  , ncp = require('ncp').ncp
 ;
 
 // Limit the number of copy processes to 1
-ncp.limit = 1;
 
-var user = {};
 // Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to
 //   serialize users into and deserialize users out of the session.  Typically,
@@ -50,9 +47,6 @@ passport.use(new GoogleStrategy({
   }
 ));
 
-
-
-
 var app = express.createServer();
 
 // configure Express
@@ -74,28 +68,20 @@ app.configure(function() {
 
 
 app.get('/', ensureAuthenticated, function(req, res){
-  if (req.isAuthenticated()) {
-	if (!user.identifier) {
-		user = req.user;
-	}
-  	getProxy();
-	console.log(util.inspect(user));
-  }
-  res.render('index', { user: user });
+  req.user = getProxy(req.user);
+  res.render('index', { user: req.user });
 });
 
 app.get('/account', ensureAuthenticated, function(req, res){
-  res.render('account', { user: user });
+  res.render('account', { user: req.user });
 });
 
 app.get('/login', function(req, res){
-  res.render('login', { user: user });
+  res.render('login', { user: req.user });
 });
 
 app.get('/shutdown', ensureAuthenticated, function(req,res) {
-  if (user.child) {
-	exitRefine();
-  }
+  req.user = exitRefine(req.user);
   res.redirect('/logout');
 });
 
@@ -122,11 +108,8 @@ app.get('/auth/google/return',
   });
 
 app.get('/logout', function(req, res){
-  if (user.child) {
-	exitRefine();
-  }
+  req.user = exitRefine(req.user);
   req.logout();
-  delete user;
   delete req;
   res.redirect('/');
 });
@@ -146,7 +129,7 @@ function ensureAuthenticated(req, res, next) {
   res.redirect('/login')
 }
 
-function getProxy() {
+function getProxy(user) {
 	console.log("\n\n" + user.emails[0].value + "\n\n");
 	var servers = loadServerData();
 	if (!servers) {
@@ -157,42 +140,22 @@ function getProxy() {
 		proxy = servers[i];
 		console.log("\n\nInspecting " + proxy.port + "\n\n");
 
-		// Check to see if there is a server running
-		//if (proxy.user == user.emails[0].value && proxy.child != "") {
-		//	user.proxy_port = proxy.port;
-		//	return user;
-		//}
-
 		// Find a port to run a server on
 		if (proxy.user == "" || proxy.user == user.emails[0].value) {
 			servers[i].user = user.emails[0].value;
 			saveServerData(servers);
 			user.proxy_port = proxy.port;
 			
-			// Find or create users directory
+			// Find or create users data directory
 
 			fs.readdir('./users/' + user.emails[0].value, 
 				function (err,list) {
-					if (err) { 
-						fs.readdir('./users/RefineReady/',
-							function (err,list) {
-								if (!err) {
-
-									console.log('\n\nCan create ' + user.emails[0].value + ' directory\n\n');
-									fs.renameSync('./users/RefineReady/','./users/' + user.emails[0].value);
-									var child = launchRefine('./users/' + user.emails[0].value);
-									user.child = child;
-										
-									makeNewRefineReady();
-								} else {
-									console.log('\n\nNo resource ready to copy from\n\n');
-								}
-							}
-						);
-					} else {
-						var child = launchRefine('./users/' + user.emails[0].value, proxy.port);
-						user.child = child;
-					}
+					if (err) {
+						fs.mkdirSync('./users/' + user.emails[0].value);
+					} 
+					// Run Refine
+					var child = launchRefine(user);
+					user.child = child;
 				}
 			);
 			return user;
@@ -200,6 +163,23 @@ function getProxy() {
 	}
 	user.proxy_port = "0";
 	return user;
+}
+
+function releaseProxyPort(port) {
+	var servers = loadServerData();
+	if (!servers) {
+		console.log("\n\nNO SERVERS LOADED\n\n");
+		return false;
+	}
+	for (var i = 0; i<servers.length; i++) {
+		proxy = servers[i];
+
+		// Find a port to run a server on
+		if (proxy.port == port) {
+			servers[i].user = "";
+			saveServerData(servers);
+		}
+	}
 }
 
 function loadServerData() {
@@ -238,23 +218,28 @@ function makeNewRefineReady() {
 	);
 }
 									
-function launchRefine(path,port) {
-	user.child = exec(path + "/refine -p " + port, 
+function launchRefine(user) {
+	path = './users/' + user.emails[0].value;
+	port = user.proxy_port;
+	console.log("\n\nLauching Refine with data " + path + " on port " + port + "\n\n");
+	user.child = exec("./OpenRefine/refine -d " + path + " -p " + port, 
 		function (error, stdout, strerr) {
 		}
 	);
 	return user.child;
 }
 
-function exitRefine() {	
-	user.child.kill();
+function exitRefine(user) {	
 	exec("ps aux | grep refine.port=" + user.proxy_port + " | grep -v grep | awk '{split($0,a,\" \"); print a[2]}'", 
 		function (error, stdout, strerr) {
-			exec('kill -9 ' + stdout,
+			exec('kill -15 ' + stdout,
 				function (error, stdout, strerr) {
 				}
 			);
 		}
 	);
+	releaseProxyPort(user.proxy_port);
 	delete user.child;
+	delete user.proxy_port;
+	return user;
 }

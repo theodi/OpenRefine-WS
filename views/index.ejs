@@ -1,4 +1,4 @@
-<% if (!user.identifier) { %>
+<% if (!user) { %>
 	<h2>Welcome! Please log in.</h2>
 <% } else if (user.proxy_port > 0) { %>
 	<h2>Your instance of Open Refine is starting at <a target="_blank" href="http://localhost:<%= user.proxy_port %>">http://localhost:<%= user.proxy_port %></a>.</h2>
