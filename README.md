@@ -43,6 +43,21 @@ Installation
 8. run "nodejs app.js" (as root (port 80))
 9. run "nodejs firewall-control.js" (as root)
 
+Running from the Amazon AMI
+---------------------------
+There is an Amazon AMI available in the EU-West region (Ireland). In order to run this AMI you will need to do the following.
+
+1. Find the AMI in Amazon called "[ODI] Open Refine Web"
+2. When creating this AMI you will need the following secutiry group:
+	* Allow Port 22 TCP (SSH)
+	* Allow Port 80 TCP (HTTP)
+	* Allow Ports 3000-3010 (Custom refine)
+3. When the machine launches, note the URL from the ec2 console
+4. Launch the AMI and login via SSH at the URL given.
+	* cd OpenRefine-WS-master
+	* Follow step 4 from above to get your Google API keys for this machine (again using the URL)
+5. Edit the config.js file and add this config
+6. reboot the machine (sudo shutdown -r now)
 
 TODO
 ----
