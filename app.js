@@ -1,14 +1,56 @@
-var ip = "192.168.56.101";
-var host = "192.168.56.101";
 var express = require('express')
   , passport = require('passport')
   , util = require('util')
-  , GoogleStrategy = require('passport-google').Strategy
+  , OAuth2Strategy = require('passport-google-oauth').OAuth2Strategy
   , fs = require('fs')
   , sys = require('sys')
   , exec = require('child_process').exec
+  , os = require('os')
+  , http = require('http')
+  , dns = require('dns')
 ;
 
+var config = require('./config');
+if (!config.ip) {
+	var ifaces=os.networkInterfaces();
+	for (var dev in ifaces) {
+  		var alias=0;
+		ifaces[dev].forEach(function(details){
+		  if (details.family=='IPv4') {
+			if (details.address != "127.0.0.1" && !config.ip) {
+      				config.ip=details.address;	
+			}
+    		  }
+  		});
+	}
+}
+
+if (!config.host) {
+	var options = {
+	    host: 'odinprac.theodi.org',
+	    path: '/getIP.php'
+	}
+	var request = http.request(options, function (res) {
+	    var data = '';
+	    res.on('data', function (chunk) {
+        	data += chunk;
+	    });
+	    res.on('end', function () {
+		dns.reverse(data,function(err,domains) {
+			if (!err) {
+				domains.forEach(function(a) {
+					config.host=a;
+					console.log(config.host);
+				});
+			}
+		});
+	    });
+	});
+	request.on('error', function (e) {
+	    console.log(e.message);
+	});
+	request.end();
+}
 
 // Limit the number of copy processes to 1
 
@@ -32,20 +74,18 @@ passport.deserializeUser(function(obj, done) {
 //   Strategies in passport require a `validate` function, which accept
 //   credentials (in this case, an OpenID identifier and profile), and invoke a
 //   callback with a user object.
-passport.use(new GoogleStrategy({
-    returnURL: 'http://' + host + ':3000/auth/google/return',
-    realm: 'http://' + host + ':3000/'
+passport.use(new OAuth2Strategy({
+    authorizationURL: 'https://accounts.google.com/o/oauth2/auth',
+    tokenURL: 'https://accounts.google.com/o/oauth2/token',
+    clientID: config.googleAuth.clientID,
+    clientSecret: config.googleAuth.clientSecret,
+    callbackURL: "/auth/google/return"
   },
-  function(identifier, profile, done) {
-    // asynchronous verification, for effect...
-    process.nextTick(function () {
-      
-      // To keep the example simple, the user's Google profile is returned to
-      // represent the logged-in user.  In a typical application, you would want
-      // to associate the Google account with a user record in your database,
-      // and return that user instead.
-      profile.identifier = identifier;
-      return done(null, profile);
+  function(accessToken, refreshToken, profile, done) {
+//    User.findOrCreate({ exampleId: profile.id }, function (err, user) {
+      process.nextTick(function() {
+	      profile.identifier = accessToken;
+	      return done(null, profile);
     });
   }
 ));
@@ -137,7 +177,7 @@ app.get('/js/countdown.js', function(req,res) {
 //   the user to google.com.  After authenticating, Google will redirect the
 //   user back to this application at /auth/google/return
 app.get('/auth/google', 
-  passport.authenticate('google', { failureRedirect: '/home' }),
+  passport.authenticate('google', { scope: ['profile', 'email'], failureRedirect: '/home' }),
   function(req, res) {
     res.redirect('/');
   });
@@ -148,7 +188,7 @@ app.get('/auth/google',
 //   login page.  Otherwise, the primary route function function will be called,
 //   which, in this example, will redirect the user to the home page.
 app.get('/auth/google/return', 
-  passport.authenticate('google', { failureRedirect: '/home' }),
+  passport.authenticate('google', { scope: ['profile', 'email'], failureRedirect: '/home' }),
   function(req, res) {
     res.redirect('/');
   });
@@ -160,7 +200,8 @@ app.get('/logout', function(req, res){
   res.redirect('/home');
 });
 
-app.listen(3000);
+app.listen(80);
+console.log('App running on port 80');
 
 // Simple route middleware to ensure user is authenticated.
 //   Use this route middleware on any resource that needs to be protected.  If
@@ -168,7 +209,7 @@ app.listen(3000);
 //   the request will proceed.  Otherwise, the user will be redirected to the
 //   login page.
 function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) { 
+  if (req.isAuthenticated()) {
 	return next(); 
   }
   res.redirect('/home')
@@ -202,7 +243,7 @@ function getProxy(user) {
 
 			saveServerData(servers);
 			user.proxy_port = proxy.port;
-			user.host = host;
+			user.host = config.host;
 			user.expire = servers[i].expire;
 			
 			// Find or create users data directory
@@ -311,7 +352,7 @@ function launchRefine(user) {
 	path = process.cwd() + '/users/' + user.emails[0].value;
 	port = user.proxy_port;
 //	console.log("\n\nLauching Refine with data " + path + " on port " + port + "\n\n");
-	user.child = exec("./OpenRefine/refine -d " + path + " -i " + ip + " -p " + port, 
+	user.child = exec("./OpenRefine/refine -d " + path + " -i " + config.ip + " -p " + port, 
 		function (error, stdout, strerr) {
 		}
 	);

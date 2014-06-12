@@ -1,4 +1,5 @@
 users/*
 servers.json
+config.js
 node_modules
 OpenRefine
