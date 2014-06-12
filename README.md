@@ -47,7 +47,7 @@ Running from the Amazon AMI
 ---------------------------
 There is an Amazon AMI available in the EU-West region (Ireland). In order to run this AMI you will need to do the following.
 
-1. Find the AMI in Amazon called "[ODI] Open Refine Web"
+1. Find the AMI in Amazon called "[ODI] OpenRefine Web"
 2. When creating this AMI you will need the following secutiry group:
 	* Allow Port 22 TCP (SSH)
 	* Allow Port 80 TCP (HTTP)
