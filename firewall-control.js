@@ -17,7 +17,8 @@ var fs = require('fs')
   , exec = require('child_process').exec
 ;
 
-allowToPort("3000","any");
+allowToPort("80","any");
+console.log("Firewall control ready");
 
 fs.watchFile('servers.json', 
 	function(ev,file) {
