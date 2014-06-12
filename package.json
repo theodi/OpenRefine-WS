@@ -7,7 +7,6 @@
     "passport": ">= 0.0.0",
     "passport-google-oauth": ">= 0.0.0",
     "http": ">= 0.0.0",
-    "dns": ">= 0.0.0",
     "ncp": ">= 0.0.0"
   }
 }

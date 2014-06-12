@@ -3,7 +3,7 @@
 // expose our config directly to our application using module.exports
 module.exports = {
 	// Hostname of web service
-	'host' : 'http://example.com',
+	'host' : 'example.com',
 	// IP of web facing interface where this host ends up, e.g. after firewalls and nats etc. 
 	'ip' : '192.168.1.10',
 	'googleAuth' : {
